@@ -1,7 +1,13 @@
-var builder = WebApplication.CreateBuilder(args);
+﻿using LowFPS.Server.StreamingHubs;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
+var magiconion = builder.Services.AddMagicOnion();
+
+builder.Services.AddSingleton<RoomContextRepository>();
+
 builder.Services.AddMagicOnion();
+
+builder.Services.AddMvcCore().AddApiExplorer();
 
 var app = builder.Build();
 
