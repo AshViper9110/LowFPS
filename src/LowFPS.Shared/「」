@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LowFPS.Shared</name>
+    </assembly>
+    <members>
+        <member name="T:LowFPS.Shared.Interfaces.Services.JoinedUser">
+            <summary>
+            接続済みユーザー
+            </summary>
+        </member>
+        <member name="P:LowFPS.Shared.Interfaces.Services.JoinedUser.ConnectionId">
+            <summary>
+            接続id
+            </summary>
+        </member>
+        <member name="P:LowFPS.Shared.Interfaces.Services.JoinedUser.Name">
+            <summary>
+            名前
+            </summary>
+        </member>
+        <member name="P:LowFPS.Shared.Interfaces.Services.JoinedUser.JoinOrder">
+            <summary>
+            参加順番
+            </summary>
+        </member>
+        <member name="T:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub">
+            <summary>
+            クライアントから呼び出す処理を実装するクラス用インターフェース
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.JoinRoomAsync(System.String,System.String)">
+            <summary>
+            ルームに接続
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.LeaveRoomAsync">
+            <summary>
+            退出処理
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.GetConnectionId">
+            <summary>
+            接続ID取得
+            </summary>
+        </member>
+        <member name="T:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver">
+            <summary>
+            サーバーからクライアントへの通知関連
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnJoinRoom(LowFPS.Shared.Interfaces.Services.JoinedUser)">
+            <summary>
+            ユーザーの入室通知
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnLeaveRoom(System.Guid,System.Int32)">
+            <summary>
+            ユーザーの退室通知
+            </summary>
+        </member>
+        <member name="T:LowFPS.Shared.Models.Entities.SimpleTransform">
+            <summary>
+            MagicOnionでTransformを使用可能にするクラス
+            </summary>
+        </member>
+        <member name="F:LowFPS.Shared.Models.Entities.SimpleTransform.localPosition">
+            <summary>
+            ローカル座標
+            </summary>
+        </member>
+        <member name="F:LowFPS.Shared.Models.Entities.SimpleTransform.localRotation">
+            <summary>
+            ローカルローテーション
+            </summary>
+        </member>
+        <member name="F:LowFPS.Shared.Models.Entities.SimpleTransform.localScale">
+            <summary>
+            ローカルスケール
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Models.Entities.SimpleTransform.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Models.Entities.SimpleTransform.#ctor(UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector3)">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="T:MessagePack.GeneratedMessagePackResolver">
+            <summary>A MessagePack resolver that uses generated formatters for types in this assembly.</summary>
+        </member>
+        <member name="F:MessagePack.GeneratedMessagePackResolver.Instance">
+            <summary>An instance of this resolver that only returns formatters specifically generated for types in this assembly.</summary>
+        </member>
+    </members>
+</doc>
