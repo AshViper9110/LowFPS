@@ -12,6 +12,16 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
     /// </summary>
     public interface IRoomHub : IStreamingHub<IRoomHub, IRoomHubReceiver> {
         /// <summary>
+        /// 接続ID取得
+        /// </summary>
+        Task<Guid> GetConnectionId();
+
+        /// <summary>
+        /// 通信速度測定
+        /// </summary>
+        Task<DateTime> SpeedTestAsync(DateTime sendTime, TimeSpan receivedSpan);
+
+        /// <summary>
         /// ルームに接続
         /// </summary>
         Task<JoinedUser[]> JoinRoomAsync(string userName, string roomName);
@@ -20,10 +30,5 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
         /// 退出処理
         /// </summary>
         Task LeaveRoomAsync();
-
-        /// <summary>
-        /// 接続ID取得
-        /// </summary>
-        Task<Guid> GetConnectionId();
     }
 }

@@ -29,6 +29,16 @@
             クライアントから呼び出す処理を実装するクラス用インターフェース
             </summary>
         </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.GetConnectionId">
+            <summary>
+            接続ID取得
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.SpeedTestAsync(System.DateTime,System.TimeSpan)">
+            <summary>
+            通信速度測定
+            </summary>
+        </member>
         <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.JoinRoomAsync(System.String,System.String)">
             <summary>
             ルームに接続
@@ -37,11 +47,6 @@
         <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.LeaveRoomAsync">
             <summary>
             退出処理
-            </summary>
-        </member>
-        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.GetConnectionId">
-            <summary>
-            接続ID取得
             </summary>
         </member>
         <member name="T:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver">

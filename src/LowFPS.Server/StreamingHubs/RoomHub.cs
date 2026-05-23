@@ -37,6 +37,28 @@ namespace LowFPS.Server.StreamingHubs {
         }
 
         /// <summary>
+        /// 通信速度測定
+        /// </summary>
+        public Task<DateTime> SpeedTestAsync(DateTime sendTime, TimeSpan receivedSpan) {
+            DateTime receivedTime = DateTime.UtcNow;
+            TimeSpan elapsedTime = receivedTime - sendTime;
+
+            _roomContext.RoomUserDataList[this.ConnectionId].sendSpan = elapsedTime;
+            _roomContext.RoomUserDataList[this.ConnectionId].receivedSpan = receivedSpan;
+
+            Console.WriteLine($"送信時間：{elapsedTime}");
+            Console.WriteLine($"受信時間：{receivedSpan}");
+
+            return Task.FromResult<DateTime>(receivedTime);
+        }
+
+        /*
+         * 
+         * ゲーム内処理
+         * 
+         */
+
+        /// <summary>
         /// ルーム作成
         /// </summary>
         public Task CreateRoomAsync(string roomName) {

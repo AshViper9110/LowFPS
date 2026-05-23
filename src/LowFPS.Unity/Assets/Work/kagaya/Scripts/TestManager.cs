@@ -7,4 +7,10 @@ public class TestManager : MonoBehaviour {
 
         await RoomModel.I.JoinRoomAsync("TestUser", "TestRoom");
     }
+
+    private async void Update() {
+        if (Input.GetKeyDown(KeyCode.F)) {
+            await RoomModel.I.SpeedTestAsync();
+        }
+    }
 }

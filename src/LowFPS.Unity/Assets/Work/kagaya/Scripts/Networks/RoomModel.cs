@@ -5,6 +5,7 @@ using MagicOnion;
 using MagicOnion.Client;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
@@ -34,6 +35,11 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     /// </summary>
     private bool isJoinRoom = false;
     public bool IsJoinRoom { get { return isJoinRoom; } }
+
+    /// <summary>
+    /// サーバーからの受信時間
+    /// </summary>
+    private TimeSpan receivedSpan = TimeSpan.Zero;
 
     /*
     * サーバー通知
@@ -93,6 +99,19 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     protected override void OnApplicationQuit() {
         base.OnApplicationQuit();
         DisconnectAsync().Forget();
+    }
+
+    /// <summary>
+    /// 通信速度測定
+    /// </summary>
+    public async UniTask SpeedTestAsync() {
+        if (roomHub == null) {
+            throw new Exception("RoomHubがnullです。");
+        }
+
+        DateTime sendTime = DateTime.UtcNow;
+        DateTime receivedTime = await roomHub.SpeedTestAsync(sendTime, receivedSpan);
+        receivedSpan = DateTime.UtcNow - receivedTime;
     }
 
     /// <summary>
