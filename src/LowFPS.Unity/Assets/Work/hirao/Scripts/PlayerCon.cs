@@ -7,7 +7,6 @@ public class PlayerCon : MonoBehaviour
     [Header("References")]
     public Transform cameraRoot;
     public Camera playerCamera;
-
     public Transform gunPivot;
 
     // アイアンサイト位置
@@ -16,13 +15,11 @@ public class PlayerCon : MonoBehaviour
     [Header("Mouse")]
     public float sensitivity = 2f;
     public float adsSensitivity = 0.7f;
-
     public float maxLookAngle = 85f;
 
     [Header("Movement")]
     public float moveSpeed = 6f;
     public float sprintMultiplier = 1.5f;
-
     public float jumpForce = 5f;
     public float airControl = 0.4f;
 
@@ -32,29 +29,22 @@ public class PlayerCon : MonoBehaviour
 
     [Header("Gun Lag")]
     public float gunMaxOffset = 10f;
-
     public float gunLagSpeed = 18f;
     public float gunReturnSpeed = 6f;
 
     [Header("ADS")]
     public float adsFOV = 50f;
-
     public float adsSpeed = 12f;
-
     public float adsCameraSpeed = 18f;
     public float adsRotationSpeed = 18f;
-
     public float adsGunLagMultiplier = 0.15f;
-
-    public Vector3 adsPosition =
-        new Vector3(0f, -0.04f, 0.12f);
+    public Vector3 adsPosition = new Vector3(0f, -0.04f, 0.12f);
 
     [Header("Gun Movement")]
     public float moveTiltAmount = 2f;
 
     [Header("Lean")]
     public float leanAngle = 12f;
-
     public float leanOffset = 0.15f;
     public float leanSpeed = 10f;
 
@@ -64,7 +54,6 @@ public class PlayerCon : MonoBehaviour
 
     [Header("FOV")]
     public float walkFOV = 75f;
-
     public float sprintFOV = 82f;
     public float fovSmooth = 6f;
 
@@ -105,29 +94,17 @@ public class PlayerCon : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
         rb.freezeRotation = true;
 
-        camOriginPos =
-            cameraRoot.localPosition;
+        camOriginPos = cameraRoot.localPosition;
 
         if (gunPivot != null)
         {
-            gunOriginRot =
-                gunPivot.localRotation;
-
-            gunOriginPos =
-                gunPivot.localPosition;
+            gunOriginRot = gunPivot.localRotation;
+            gunOriginPos = gunPivot.localPosition;
         }
 
-        //
-        // ADS Point Auto Find
-        //
-
-        Transform found =
-            gunPivot.GetComponentsInChildren<Transform>(true)
-            .FirstOrDefault(t =>
-                t.name.ToLower().Contains("adspoint"));
+        Transform found = gunPivot.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name.ToLower().Contains("adspoint"));
 
         if (found != null)
         {
@@ -135,43 +112,29 @@ public class PlayerCon : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning(
-                "ADSPoint not found.\n" +
-                "Create child object named 'ADSPoint'."
-            );
+            Debug.LogWarning("ADSPoint not found.\nCreate child object named 'ADSPoint'.");
         }
 
-        cameraOriginLocalPos =
-            playerCamera.transform.localPosition;
+        cameraOriginLocalPos = playerCamera.transform.localPosition;
+        cameraOriginLocalRot = playerCamera.transform.localRotation;
 
-        cameraOriginLocalRot =
-            playerCamera.transform.localRotation;
-
-        Cursor.lockState =
-            CursorLockMode.Locked;
-
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void Update()
     {
         Look();
-
         Lean();
-
         ADS();
-
         Jump();
-
         HeadBob();
-
         UpdateFOV();
     }
 
     void FixedUpdate()
     {
         GroundCheck();
-
         Move();
     }
 
@@ -181,128 +144,42 @@ public class PlayerCon : MonoBehaviour
 
     void Look()
     {
-        float currentSensitivity =
-            aiming
-            ? adsSensitivity
-            : sensitivity;
+        float currentSensitivity = aiming ? adsSensitivity : sensitivity;
 
-        float mouseX =
-            Input.GetAxisRaw("Mouse X") *
-            currentSensitivity;
-
-        float mouseY =
-            Input.GetAxisRaw("Mouse Y") *
-            currentSensitivity;
-
-        //
-        // BODY
-        //
+        float mouseX = Input.GetAxisRaw("Mouse X") * currentSensitivity;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * currentSensitivity;
 
         yaw += mouseX;
 
-        transform.rotation =
-            Quaternion.Euler(0f, yaw, 0f);
-
-        //
-        // CAMERA
-        //
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
 
         pitch -= mouseY;
+        pitch = Mathf.Clamp(pitch, -maxLookAngle, maxLookAngle);
 
-        pitch = Mathf.Clamp(
-            pitch,
-            -maxLookAngle,
-            maxLookAngle
-        );
+        Quaternion camRot = Quaternion.Euler(pitch, 0f, currentLean);
 
-        Quaternion camRot =
-            Quaternion.Euler(
-                pitch,
-                0f,
-                currentLean
-            );
-
-        cameraRoot.localRotation =
-            Quaternion.Slerp(
-                cameraRoot.localRotation,
-                camRot,
-                Time.deltaTime * 20f
-            );
-
-        //
-        // GUN LAG
-        //
+        cameraRoot.localRotation = Quaternion.Slerp(cameraRoot.localRotation, camRot, Time.deltaTime * 20f);
 
         gunYaw += mouseX;
         gunPitch -= mouseY;
 
-        gunYaw = Mathf.Clamp(
-            gunYaw,
-            -gunMaxOffset,
-            gunMaxOffset
-        );
+        gunYaw = Mathf.Clamp(gunYaw, -gunMaxOffset, gunMaxOffset);
+        gunPitch = Mathf.Clamp(gunPitch, -gunMaxOffset, gunMaxOffset);
 
-        gunPitch = Mathf.Clamp(
-            gunPitch,
-            -gunMaxOffset,
-            gunMaxOffset
-        );
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveZ = Input.GetAxisRaw("Vertical");
 
-        //
-        // MOVE TILT
-        //
+        float tiltX = -moveZ * moveTiltAmount;
+        float tiltZ = -moveX * moveTiltAmount;
 
-        float moveX =
-            Input.GetAxisRaw("Horizontal");
+        Quaternion targetGunRot = gunOriginRot * Quaternion.Euler(gunPitch + tiltX, gunYaw, -gunYaw * 0.5f + tiltZ);
 
-        float moveZ =
-            Input.GetAxisRaw("Vertical");
+        float lagSpeed = aiming ? gunLagSpeed * adsGunLagMultiplier : gunLagSpeed;
 
-        float tiltX =
-            -moveZ * moveTiltAmount;
+        gunPivot.localRotation = Quaternion.Slerp(gunPivot.localRotation, targetGunRot, Time.deltaTime * lagSpeed);
 
-        float tiltZ =
-            -moveX * moveTiltAmount;
-
-        //
-        // FINAL GUN ROT
-        //
-
-        Quaternion targetGunRot =
-            gunOriginRot *
-            Quaternion.Euler(
-                gunPitch + tiltX,
-                gunYaw,
-                -gunYaw * 0.5f + tiltZ
-            );
-
-        float lagSpeed =
-            aiming
-            ? gunLagSpeed * adsGunLagMultiplier
-            : gunLagSpeed;
-
-        gunPivot.localRotation =
-            Quaternion.Slerp(
-                gunPivot.localRotation,
-                targetGunRot,
-                Time.deltaTime * lagSpeed
-            );
-
-        //
-        // RETURN
-        //
-
-        gunYaw = Mathf.Lerp(
-            gunYaw,
-            0f,
-            Time.deltaTime * gunReturnSpeed
-        );
-
-        gunPitch = Mathf.Lerp(
-            gunPitch,
-            0f,
-            Time.deltaTime * gunReturnSpeed
-        );
+        gunYaw = Mathf.Lerp(gunYaw, 0f, Time.deltaTime * gunReturnSpeed);
+        gunPitch = Mathf.Lerp(gunPitch, 0f, Time.deltaTime * gunReturnSpeed);
     }
 
     // =====================================
@@ -311,49 +188,23 @@ public class PlayerCon : MonoBehaviour
 
     void Move()
     {
-        float x =
-            Input.GetAxisRaw("Horizontal");
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
 
-        float z =
-            Input.GetAxisRaw("Vertical");
+        Vector3 moveDir = (transform.right * x + transform.forward * z).normalized;
 
-        Vector3 moveDir =
-            (
-                transform.right * x +
-                transform.forward * z
-            ).normalized;
+        bool sprinting = Input.GetKey(KeyCode.LeftShift) && !aiming;
 
-        bool sprinting =
-            Input.GetKey(KeyCode.LeftShift)
-            && !aiming;
+        float speed = sprinting ? moveSpeed * sprintMultiplier : moveSpeed;
 
-        float speed =
-            sprinting
-            ? moveSpeed * sprintMultiplier
-            : moveSpeed;
+        Vector3 targetVelocity = moveDir * speed;
 
-        Vector3 targetVelocity =
-            moveDir * speed;
+        Vector3 vel = rb.linearVelocity;
 
-        Vector3 vel =
-            rb.linearVelocity;
+        float control = grounded ? 1f : airControl;
 
-        float control =
-            grounded
-            ? 1f
-            : airControl;
-
-        vel.x = Mathf.Lerp(
-            vel.x,
-            targetVelocity.x,
-            control
-        );
-
-        vel.z = Mathf.Lerp(
-            vel.z,
-            targetVelocity.z,
-            control
-        );
+        vel.x = Mathf.Lerp(vel.x, targetVelocity.x, control);
+        vel.z = Mathf.Lerp(vel.z, targetVelocity.z, control);
 
         rb.linearVelocity = vel;
     }
@@ -364,15 +215,9 @@ public class PlayerCon : MonoBehaviour
 
     void Jump()
     {
-        if (
-            Input.GetButtonDown("Jump")
-            && grounded
-        )
+        if (Input.GetButtonDown("Jump") && grounded)
         {
-            rb.AddForce(
-                Vector3.up * jumpForce,
-                ForceMode.Impulse
-            );
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
@@ -382,89 +227,20 @@ public class PlayerCon : MonoBehaviour
 
     void ADS()
     {
-        aiming =
-            Input.GetMouseButton(1);
+        aiming = Input.GetMouseButton(1);
 
-        //
-        // GUN POSITION
-        //
-
-        Vector3 targetGunPos =
-            aiming
-            ? gunOriginPos + adsPosition
-            : gunOriginPos;
-
-        gunPivot.localPosition =
-            Vector3.Lerp(
-                gunPivot.localPosition,
-                targetGunPos,
-                Time.deltaTime * adsSpeed
-            );
-
-        //
-        // CAMERA ADS
-        //
-
-        if (aiming && adsPoint != null)
+        if (!aiming || adsPoint == null)
         {
-            //
-            // POSITION
-            //
-
-            Vector3 targetPos =
-                playerCamera.transform.parent
-                .InverseTransformPoint(
-                    adsPoint.position
-                );
-
-            playerCamera.transform.localPosition =
-                Vector3.Lerp(
-                    playerCamera.transform.localPosition,
-                    targetPos,
-                    Time.deltaTime *
-                    adsCameraSpeed
-                );
-
-            //
-            // ROTATION
-            //
-
-            Quaternion targetRot =
-                Quaternion.Inverse(
-                    cameraRoot.rotation
-                ) *
-                adsPoint.rotation;
-
-            playerCamera.transform.localRotation =
-                Quaternion.Slerp(
-                    playerCamera.transform.localRotation,
-                    targetRot,
-                    Time.deltaTime *
-                    adsRotationSpeed
-                );
+            gunPivot.localPosition = Vector3.Lerp(gunPivot.localPosition, gunOriginPos, Time.deltaTime * adsSpeed);
+            return;
         }
-        else
-        {
-            //
-            // RETURN
-            //
 
-            playerCamera.transform.localPosition =
-                Vector3.Lerp(
-                    playerCamera.transform.localPosition,
-                    cameraOriginLocalPos,
-                    Time.deltaTime *
-                    adsCameraSpeed
-                );
-
-            playerCamera.transform.localRotation =
-                Quaternion.Slerp(
-                    playerCamera.transform.localRotation,
-                    cameraOriginLocalRot,
-                    Time.deltaTime *
-                    adsRotationSpeed
-                );
-        }
+        Quaternion rotationOffset = playerCamera.transform.rotation * Quaternion.Inverse(adsPoint.rotation);
+        Quaternion targetRot = rotationOffset * gunPivot.rotation;
+        Vector3 worldOffset = playerCamera.transform.position - adsPoint.position;
+        Vector3 targetPos = gunPivot.localPosition + gunPivot.parent.InverseTransformVector(worldOffset);
+        gunPivot.localPosition = Vector3.Lerp( gunPivot.localPosition,targetPos, Time.deltaTime * adsSpeed);
+        gunPivot.rotation = Quaternion.Slerp(gunPivot.rotation, targetRot, Time.deltaTime * adsRotationSpeed);
     }
 
     // =====================================
@@ -473,29 +249,17 @@ public class PlayerCon : MonoBehaviour
 
     void Lean()
     {
-        //
-        // TOGGLE
-        //
-
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (leanState == -1)
-                leanState = 0;
-            else
-                leanState = -1;
+            if (leanState == -1) leanState = 0;
+            else leanState = -1;
         }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (leanState == 1)
-                leanState = 0;
-            else
-                leanState = 1;
+            if (leanState == 1) leanState = 0;
+            else leanState = 1;
         }
-
-        //
-        // TARGET
-        //
 
         float targetLean = 0f;
         float targetOffset = 0f;
@@ -513,30 +277,11 @@ public class PlayerCon : MonoBehaviour
                 break;
         }
 
-        //
-        // SMOOTH
-        //
+        currentLean = Mathf.Lerp(currentLean, targetLean, Time.deltaTime * leanSpeed);
 
-        currentLean = Mathf.Lerp(
-            currentLean,
-            targetLean,
-            Time.deltaTime * leanSpeed
-        );
+        Vector3 targetPos = camOriginPos + new Vector3(targetOffset, 0f, 0f);
 
-        Vector3 targetPos =
-            camOriginPos +
-            new Vector3(
-                targetOffset,
-                0f,
-                0f
-            );
-
-        cameraRoot.localPosition =
-            Vector3.Lerp(
-                cameraRoot.localPosition,
-                targetPos,
-                Time.deltaTime * leanSpeed
-            );
+        cameraRoot.localPosition = Vector3.Lerp(cameraRoot.localPosition, targetPos, Time.deltaTime * leanSpeed);
     }
 
     // =====================================
@@ -545,52 +290,32 @@ public class PlayerCon : MonoBehaviour
 
     void HeadBob()
     {
-        if (!grounded)
-            return;
+        if (!grounded) return;
+        if (aiming) return;
 
-        if (aiming)
-            return;
-
-        Vector3 horizontalVel =
-            new Vector3(
-                rb.linearVelocity.x,
-                0f,
-                rb.linearVelocity.z
-            );
+        Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         if (horizontalVel.magnitude > 0.1f)
         {
-            bobTimer +=
-                Time.deltaTime * bobSpeed;
+            bobTimer += Time.deltaTime * bobSpeed;
 
-            float bob =
-                Mathf.Sin(bobTimer)
-                * bobAmount;
+            float bob = Mathf.Sin(bobTimer) * bobAmount;
 
-            Vector3 pos =
-                cameraRoot.localPosition;
+            Vector3 pos = cameraRoot.localPosition;
 
-            pos.y =
-                camOriginPos.y + bob;
+            pos.y = camOriginPos.y + bob;
 
-            cameraRoot.localPosition =
-                pos;
+            cameraRoot.localPosition = pos;
         }
         else
         {
             bobTimer = 0f;
 
-            Vector3 pos =
-                cameraRoot.localPosition;
+            Vector3 pos = cameraRoot.localPosition;
 
-            pos.y = Mathf.Lerp(
-                pos.y,
-                camOriginPos.y,
-                Time.deltaTime * 8f
-            );
+            pos.y = Mathf.Lerp(pos.y, camOriginPos.y, Time.deltaTime * 8f);
 
-            cameraRoot.localPosition =
-                pos;
+            cameraRoot.localPosition = pos;
         }
     }
 
@@ -600,9 +325,7 @@ public class PlayerCon : MonoBehaviour
 
     void UpdateFOV()
     {
-        bool sprinting =
-            Input.GetKey(KeyCode.LeftShift)
-            && !aiming;
+        bool sprinting = Input.GetKey(KeyCode.LeftShift) && !aiming;
 
         float targetFOV;
 
@@ -612,18 +335,10 @@ public class PlayerCon : MonoBehaviour
         }
         else
         {
-            targetFOV =
-                sprinting
-                ? sprintFOV
-                : walkFOV;
+            targetFOV = sprinting ? sprintFOV : walkFOV;
         }
 
-        playerCamera.fieldOfView =
-            Mathf.Lerp(
-                playerCamera.fieldOfView,
-                targetFOV,
-                Time.deltaTime * fovSmooth
-            );
+        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, Time.deltaTime * fovSmooth);
     }
 
     // =====================================
@@ -632,21 +347,10 @@ public class PlayerCon : MonoBehaviour
 
     void GroundCheck()
     {
-        grounded = Physics.Raycast(
-            transform.position,
-            Vector3.down,
-            groundDistance,
-            groundLayer
-        );
+        grounded = Physics.Raycast(transform.position, Vector3.down, groundDistance, groundLayer);
 
 #if UNITY_EDITOR
-        Debug.DrawRay(
-            transform.position,
-            Vector3.down * groundDistance,
-            grounded
-            ? Color.green
-            : Color.red
-        );
+        Debug.DrawRay(transform.position, Vector3.down * groundDistance, grounded ? Color.green : Color.red);
 #endif
     }
 }
