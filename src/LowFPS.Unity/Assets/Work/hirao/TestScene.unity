@@ -26689,6 +26689,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1454482104356440768, guid: 38be789410d69ef40a29459dfa506f11, type: 3}
   m_PrefabInstance: {fileID: 844559588}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &844929574 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1261748888023320, guid: 432643b6e5110004083fdff3e33e490b, type: 3}
+  m_PrefabInstance: {fileID: 1658902692}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &847006514
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36229,6 +36234,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5415639185833406584, guid: cf719d43f3f5d954fbe0879e403e6c98, type: 3}
   m_PrefabInstance: {fileID: 1111065319}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1111841853
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1111841854}
+  m_Layer: 0
+  m_Name: cartridgePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1111841854
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111841853}
+  serializedVersion: 2
+  m_LocalRotation: {x: -2.9103827e-11, y: 1, z: -3.6015985e-10, w: 0}
+  m_LocalPosition: {x: 0.0157, y: 0.0628, z: 0.0348}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1658902693}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &1121030671
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55435,13 +55471,62 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4251306428143386, guid: 432643b6e5110004083fdff3e33e490b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 736897711}
-    m_AddedComponents: []
+    - targetCorrespondingSourceObject: {fileID: 4251306428143386, guid: 432643b6e5110004083fdff3e33e490b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1111841854}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1261748888023320, guid: 432643b6e5110004083fdff3e33e490b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1658902696}
+    - targetCorrespondingSourceObject: {fileID: 1261748888023320, guid: 432643b6e5110004083fdff3e33e490b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1658902697}
   m_SourcePrefab: {fileID: 100100000, guid: 432643b6e5110004083fdff3e33e490b, type: 3}
 --- !u!4 &1658902693 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4251306428143386, guid: 432643b6e5110004083fdff3e33e490b, type: 3}
   m_PrefabInstance: {fileID: 1658902692}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1658902696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844929574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37b31360b70c2cb45a8664157ff3aa89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunData: {fileID: 1658902697}
+  shellPrefab: {fileID: 255560521335316611, guid: 315e52291bf391f42a93c952404bfff8, type: 3}
+  shellForce: 3
+  shellTorque: 5
+  shellLifeTime: 10
+  range: 200
+  bulletHolePrefab: {fileID: 262344913063864164, guid: f7b5527afbc87d6419c73547215d6359, type: 3}
+  bulletHoleLifeTime: 10
+--- !u!114 &1658902697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844929574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd302abc449324f44bf2b584c2f93f42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunName: M249
+  ammoRounds: 30
+  backlash: 5
+  accuracy: 1.6
+  damage: 25
+  rpm: 300
+  muzzlePoint: {fileID: 736897711}
+  shellEjectPoint: {fileID: 1111841854}
 --- !u!1001 &1659553672
 PrefabInstance:
   m_ObjectHideFlags: 0
