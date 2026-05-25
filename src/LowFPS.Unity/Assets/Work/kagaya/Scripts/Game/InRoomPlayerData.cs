@@ -41,8 +41,21 @@ public class InRoomPlayerData : Singleton<InRoomPlayerData> {
     /// <summary>
     /// プレイヤーリストから削除
     /// </summary>
-    public void RemovePlayer(Guid connectionId) {
+    public void RemovePlayer(Guid connectionId, int joinOrder) {
         Destroy(playerList[connectionId].playerObj);
         playerList.Remove(connectionId);
+        //自身の繰り下げ
+        if (mySelf.joinedUser.JoinOrder > joinOrder)
+        {
+            mySelf.joinedUser.JoinOrder--;
+        }
+        //全体の繰り下げ
+        foreach (PlayerData player in playerList.Values)
+        {
+            if(player.joinedUser.JoinOrder > joinOrder)
+            {
+                player.joinedUser.JoinOrder--;
+            }
+        }
     }
 }
