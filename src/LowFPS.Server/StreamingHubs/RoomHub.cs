@@ -1,6 +1,7 @@
 ﻿using LowFPS.Server.Services;
 using LowFPS.Shared.Interfaces.Services;
 using LowFPS.Shared.Interfaces.StreamingHubs;
+using LowFPS.Shared.Models.Entities;
 using MagicOnion.Server.Hubs;
 
 namespace LowFPS.Server.StreamingHubs {
@@ -46,8 +47,7 @@ namespace LowFPS.Server.StreamingHubs {
             _roomContext.RoomUserDataList[this.ConnectionId].sendSpan = elapsedTime;
             _roomContext.RoomUserDataList[this.ConnectionId].receivedSpan = receivedSpan;
 
-            Console.WriteLine($"送信時間：{elapsedTime}");
-            Console.WriteLine($"受信時間：{receivedSpan}");
+            Console.WriteLine(elapsedTime);
 
             return Task.FromResult<DateTime>(receivedTime);
         }
@@ -151,6 +151,177 @@ namespace LowFPS.Server.StreamingHubs {
             if (this._roomContext.RoomUserDataList.Count == 0) {
                 DeleteRoomAsync();
             }
+
+            return Task.CompletedTask;
+        }
+
+        /*
+         * 
+         * ユーザー
+         * 
+         */
+
+        /// <summary>
+        /// ユーザーのTransfrom同期
+        /// </summary>
+        public Task UpdateUserTransformAsync(SimpleTransform playerTransform) {
+            // サーバーに保持
+            _roomContext.RoomUserDataList[this.ConnectionId].transform = playerTransform;
+
+            TimeSpan sendSpan = _roomContext.RoomUserDataList[this.ConnectionId].sendSpan;
+
+            // 自分以外のユーザーに通知
+            _roomContext.Group.Except([this.ConnectionId]).OnUpdateUserTransform(this.ConnectionId, playerTransform, sendSpan);
+
+            return Task.CompletedTask;
+        }
+
+        /*
+         * 
+         * オブジェクト
+         * 
+         */
+
+        /// <summary>
+        /// オブジェクト作成
+        /// </summary>
+        public Task<Guid> CreateObjectAsync(SimpleTransform createdTransform, int objectListId) {
+            // id作成
+            Guid objId = Guid.NewGuid();
+
+            // 情報作成
+            RoomObjectData roomObjectData = new RoomObjectData() {
+                objectListId = objectListId,
+                simpleTransform = createdTransform,
+                ownerConnectionId = this.ConnectionId,
+                ownerExist = true,
+            };
+
+            // サーバーに保持
+            this._roomContext.RoomObjectDataList[objId] = roomObjectData;
+
+            // 自分以外に通知
+            this._roomContext.Group.Except([this.ConnectionId]).OnCreateObject(objId, this.ConnectionId, createdTransform, objectListId);
+
+            return Task.FromResult<Guid>(objId);
+        }
+
+        /// <summary>
+        /// オブジェクトリストに追加
+        /// </summary>
+        public Task AddObjectListAsync(Guid objectId, int objectListId, SimpleTransform simpleTransform) {
+            // 情報作成
+            RoomObjectData roomObjectData = new RoomObjectData() {
+                objectListId = objectListId,
+                simpleTransform = simpleTransform,
+                ownerConnectionId = this.ConnectionId,
+            };
+
+            // サーバーに保持
+            this._roomContext.RoomObjectDataList[objectId] = roomObjectData;
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// オブジェクトのTransform同期
+        /// </summary>
+        public Task UpdateObjectTransformAsync(Guid objectId, SimpleTransform sTransform) {
+            // そのオブジェクトIdがあるか所有者のIdが一致しているか
+            if (!this._roomContext.RoomObjectDataList.ContainsKey(objectId) ||
+                this._roomContext.RoomObjectDataList[objectId].ownerConnectionId != this.ConnectionId) {
+                return Task.CompletedTask;
+            }
+
+            // サーバーに保持
+            this._roomContext.RoomObjectDataList[objectId].simpleTransform = sTransform;
+
+            TimeSpan sendSpan = _roomContext.RoomUserDataList[this.ConnectionId].sendSpan;
+
+            // 自分以外に通知
+            this._roomContext.Group.Except([this.ConnectionId]).OnUpdateObjectTransform(objectId, sTransform, sendSpan);
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// オブジェクトの削除
+        /// </summary>
+        public Task DestroyObjectAsync(Guid objectId) {
+            // そのオブジェクトIdがあるか所有者のIdが一致しているか
+            if (!this._roomContext.RoomObjectDataList.ContainsKey(objectId) ||
+                this._roomContext.RoomObjectDataList[objectId].ownerConnectionId != this.ConnectionId) {
+                return Task.CompletedTask;
+            }
+
+            // サーバーから削除
+            this._roomContext.RoomObjectDataList.Remove(objectId);
+
+            // 自分以外に通知
+            this._roomContext.Group.Except([this.ConnectionId]).OnDestroyObject(objectId);
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 所有権を取得する
+        /// </summary>
+        public Task<bool> GetOwnershipAsync(Guid objectId, bool forcibly = false) {
+            // そのプレイヤーとオブジェとが存在するか
+            if (!this._roomContext.RoomUserDataList.ContainsKey(this.ConnectionId) ||
+                !this._roomContext.RoomObjectDataList.ContainsKey(objectId)) {
+                return Task.FromResult<bool>(false);
+            }
+
+            // もし所有者だったら何もしない
+            if (this._roomContext.RoomObjectDataList[objectId].ownerConnectionId == this.ConnectionId) {
+                return Task.FromResult<bool>(true);
+            }
+
+            // 前の所有者
+            Guid beforeOwner = this._roomContext.RoomObjectDataList[objectId].ownerConnectionId;
+
+            // 同時に所有権を取得しないように排他制御
+            lock (this._roomContext.RoomObjectDataList) {
+                // 強制じゃなければ
+                if (!forcibly) {
+                    // 別のプレイヤーが所有者を有していたら無効
+                    if (this._roomContext.RoomObjectDataList[objectId].ownerExist) {
+                        return Task.FromResult<bool>(false);
+                    }
+                }
+
+                this._roomContext.RoomObjectDataList[objectId].ownerExist = true;
+                this._roomContext.RoomObjectDataList[objectId].ownerConnectionId = this.ConnectionId;
+
+                // 前の所有者に所有権削除通知をおくる
+                this._roomContext.Group.Only([beforeOwner]).OnDeleateOwnership(objectId);
+            }
+
+            return Task.FromResult<bool>(true);
+        }
+
+        /// <summary>
+        /// 所有権を放棄する
+        /// </summary>
+        public Task OwnershipAbandonmentAsync(Guid objectId) {
+            if (this._roomContext == null) {
+                return Task.CompletedTask;
+            }
+
+            // そのプレイヤーとオブジェとが存在するか
+            if (!this._roomContext.RoomUserDataList.ContainsKey(this.ConnectionId) ||
+                !this._roomContext.RoomObjectDataList.ContainsKey(objectId)) {
+                return Task.CompletedTask;
+            }
+
+            // もし所有者じゃなかったら何もしない
+            if (this._roomContext.RoomObjectDataList[objectId].ownerConnectionId != this.ConnectionId) {
+                return Task.CompletedTask;
+            }
+
+            // 解除
+            this._roomContext.RoomObjectDataList[objectId].ownerExist = false;
 
             return Task.CompletedTask;
         }
