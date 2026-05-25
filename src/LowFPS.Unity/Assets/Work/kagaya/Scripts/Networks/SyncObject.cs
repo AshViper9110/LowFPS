@@ -176,7 +176,7 @@ public class SyncObject : MonoBehaviour {
             sTransform.localPosition = sTransform.localPosition + (direction * distance);
         }
 
-        this.transform.ApplyTransform(sTransform, conSpan + SendSpan);
+        this.transform.ApplyTransform(sTransform, SendSpan);
     }
 
     /// <summary>
