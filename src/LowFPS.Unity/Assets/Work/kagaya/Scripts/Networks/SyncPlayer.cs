@@ -40,7 +40,7 @@ public class SyncPlayer : MonoBehaviour {
     /// Transform同期
     /// </summary>
     private void UpdateUserTransformAsync() {
-        if (RoomModel.I.ConnectionId != connectionId) {
+        if (!IsOwner()) {
             return;
         }
 
@@ -69,6 +69,13 @@ public class SyncPlayer : MonoBehaviour {
             sTransform.localPosition = sTransform.localPosition + (direction * distance);
         }
 
-        this.transform.ApplyTransform(sTransform, SendSpan);
+        this.transform.ApplyTransform(sTransform, conSpan + SendSpan);
+    }
+
+    /// <summary>
+    /// 自分自身だったら
+    /// </summary>
+    public bool IsOwner() {
+        return RoomModel.I.ConnectionId == connectionId;
     }
 }

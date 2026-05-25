@@ -1,5 +1,4 @@
 ﻿using LowFPS.Shared.Interfaces.Services;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class TestManager : MonoBehaviour {
@@ -7,6 +6,16 @@ public class TestManager : MonoBehaviour {
 
     private void Awake() {
         RoomModel.I.OnJoinedUser += OnJoinedUser;
+    }
+
+    private void OnDisable() {
+        if (RoomModel.I != null) {
+            RoomModel.I.OnJoinedUser -= OnJoinedUser;
+        }
+    }
+
+    private void OnDestroy() {
+        OnDisable();
     }
 
     private async void Start() {
