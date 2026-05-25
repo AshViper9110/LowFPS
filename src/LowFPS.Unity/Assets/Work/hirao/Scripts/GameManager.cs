@@ -1,4 +1,5 @@
 using LowFPS.Shared.Interfaces.Services;
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         RoomModel.I.OnJoinedUser += OnJoinedUser;
+        RoomModel.I.OnLeavedUser += OnLeavedUser;
     }
 
     // Update is called once per frame
@@ -32,6 +34,26 @@ public class GameManager : MonoBehaviour
             GameObject user = Instantiate(syncPlayerPrefab);
             SyncPlayer syncPlayer = user.GetComponent<SyncPlayer>();
             syncPlayer.connectionId = joinedUser.ConnectionId;
+            PlayerData playerData = new PlayerData()
+            {
+                playerObj = user,
+                joinedUser = joinedUser,
+            };
+            InRoomPlayerData.I.AddPlayer(joinedUser.ConnectionId, playerData);
+        } else
+        {
+            Debug.Log($"“üŽº‚µ‚Ü‚µ‚½");
+            PlayerData playerData = new PlayerData()
+            {
+                playerObj = player,
+                joinedUser = joinedUser,
+            };
+            InRoomPlayerData.I.SetMySelf(playerData);
         }
+    }
+
+    private void OnLeavedUser(Guid connectionId, int joinOrder)
+    {
+        InRoomPlayerData.I.RemovePlayer(connectionId, joinOrder);
     }
 }
