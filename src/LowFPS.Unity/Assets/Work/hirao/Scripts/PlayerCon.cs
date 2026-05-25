@@ -59,6 +59,17 @@ public class PlayerCon : MonoBehaviour
 
     private Rigidbody rb;
 
+    // RECOIL
+    [Header("Recoil")]
+    public float recoilReturnSpeed = 8f;
+    public float recoilSnappiness = 18f;
+
+    private float currentRecoilX;
+    private float targetRecoilX;
+
+    private float currentRecoilY;
+    private float targetRecoilY;
+
     // LOOK
     private float yaw;
     private float pitch;
@@ -156,7 +167,15 @@ public class PlayerCon : MonoBehaviour
         pitch -= mouseY;
         pitch = Mathf.Clamp(pitch, -maxLookAngle, maxLookAngle);
 
-        Quaternion camRot = Quaternion.Euler(pitch, 0f, currentLean);
+        currentRecoilX = Mathf.Lerp(currentRecoilX, targetRecoilX, Time.deltaTime * recoilSnappiness);
+
+        currentRecoilY = Mathf.Lerp(currentRecoilY, targetRecoilY, Time.deltaTime * recoilSnappiness);
+
+        targetRecoilX = Mathf.Lerp(targetRecoilX, 0f, Time.deltaTime * recoilReturnSpeed);
+
+        targetRecoilY = Mathf.Lerp(targetRecoilY, 0f, Time.deltaTime * recoilReturnSpeed);
+
+        Quaternion camRot = Quaternion.Euler(pitch - currentRecoilX, currentRecoilY, currentLean);
 
         cameraRoot.localRotation = Quaternion.Slerp(cameraRoot.localRotation, camRot, Time.deltaTime * 20f);
 
@@ -352,5 +371,14 @@ public class PlayerCon : MonoBehaviour
 #if UNITY_EDITOR
         Debug.DrawRay(transform.position, Vector3.down * groundDistance, grounded ? Color.green : Color.red);
 #endif
+    }
+    public void AddRecoil(float recoilAmount)
+    {
+        targetRecoilX += recoilAmount;
+
+        targetRecoilY += Random.Range(
+            -recoilAmount * 0.2f,
+             recoilAmount * 0.2f
+        );
     }
 }

@@ -4,6 +4,7 @@ public class GunShot : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GunData gunData;
+    private PlayerCon playerCon;
 
     [Header("Shell")]
     [SerializeField] private GameObject shellPrefab;
@@ -24,6 +25,16 @@ public class GunShot : MonoBehaviour
 
     // 次に撃てる時間
     private float nextFireTime;
+
+    private void Start()
+    {
+        GameObject playerObj = GameObject.Find("Player");
+
+        if (playerObj != null)
+        {
+            playerCon = playerObj.GetComponent<PlayerCon>();
+        }
+    }
 
     void Update()
     {
@@ -56,22 +67,17 @@ public class GunShot : MonoBehaviour
 
     private void Shoot()
     {
-        //
+        if (playerCon != null)
+        {
+            playerCon.AddRecoil(gunData.Backlash);
+        }
         // Shell Eject
-        //
-
         EjectShell();
 
-        //
         // Accuracy
-        //
-
         Vector3 direction = GetSpreadDirection();
 
-        //
         // Hit Scan
-        //
-
         Ray ray = new Ray(gunData.MuzzlePoint.position, direction);
 
 #if UNITY_EDITOR
