@@ -18,7 +18,7 @@ public static class TransformAdapters {
     /// </summary>
     public static void ApplyTransform(this Transform t, in SimpleTransform st, float duration) {
         t.DOKill();
-        //duration *= 2;
+        //duration *= 1.1f;
         t.DOMove(st.localPosition, duration).SetEase(Ease.InOutQuad);
         t.DOLocalRotateQuaternion(st.localRotation, duration).SetEase(Ease.InOutQuad);
         t.DOScale(st.localScale, duration).SetEase(Ease.InOutQuad);

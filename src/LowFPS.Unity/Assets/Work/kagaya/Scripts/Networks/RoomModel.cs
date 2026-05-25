@@ -151,7 +151,8 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     /// </summary>
     public async UniTask SpeedTestAsync() {
         if (roomHub == null) {
-            throw new Exception("RoomHubがnullです。");
+            // throw new Exception("RoomHubがnullです。");
+            return;
         }
         else if (!IsConnected ||
             !IsJoinRoom) {
@@ -160,7 +161,7 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
 
         DateTime sendTime = DateTime.UtcNow;
         DateTime receivedTime = await roomHub.SpeedTestAsync(sendTime, receivedSpan);
-        receivedSpan = DateTime.UtcNow - receivedTime;
+        receivedSpan = receivedTime - DateTime.UtcNow;
     }
 
     /// <summary>
@@ -251,6 +252,7 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     public void OnUpdateUserTransform(Guid connectionId, SimpleTransform playerTransform, TimeSpan sendSpan) {
         if (OnUpdatedUserTransfrom != null) {
             float conSpan = (float)sendSpan.TotalSeconds + (float)receivedSpan.TotalSeconds;
+            Debug.Log($"send：{sendSpan}, rece：{receivedSpan}");
             OnUpdatedUserTransfrom(connectionId, playerTransform, conSpan);
         }
     }
