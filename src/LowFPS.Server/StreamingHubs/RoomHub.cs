@@ -47,8 +47,6 @@ namespace LowFPS.Server.StreamingHubs {
             _roomContext.RoomUserDataList[this.ConnectionId].sendSpan = elapsedTime;
             _roomContext.RoomUserDataList[this.ConnectionId].receivedSpan = receivedSpan;
 
-            Console.WriteLine(elapsedTime);
-
             return Task.FromResult<DateTime>(receivedTime);
         }
 

@@ -69,7 +69,7 @@ public class SyncPlayer : MonoBehaviour {
             sTransform.localPosition = sTransform.localPosition + (direction * distance);
         }
 
-        this.transform.ApplyTransform(sTransform, SendSpan);
+        this.transform.ApplyTransform(sTransform, conSpan + SendSpan);
     }
 
     /// <summary>
