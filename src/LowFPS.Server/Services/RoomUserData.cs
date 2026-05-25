@@ -12,5 +12,15 @@ namespace LowFPS.Server.Services {
         /// ユーザーのTransform情報
         /// </summary>
         public SimpleTransform transform = new SimpleTransform();
+
+        /// <summary>
+        /// このプレイヤーの送信時間
+        /// </summary>
+        public TimeSpan sendSpan = TimeSpan.Zero;
+
+        /// <summary>
+        /// このプレイヤーの受信時間
+        /// </summary>
+        public TimeSpan receivedSpan = TimeSpan.Zero;
     }
 }
