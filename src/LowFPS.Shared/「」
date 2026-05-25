@@ -29,6 +29,16 @@
             クライアントから呼び出す処理を実装するクラス用インターフェース
             </summary>
         </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.GetConnectionId">
+            <summary>
+            接続ID取得
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.SpeedTestAsync(System.DateTime,System.TimeSpan)">
+            <summary>
+            通信速度測定
+            </summary>
+        </member>
         <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.JoinRoomAsync(System.String,System.String)">
             <summary>
             ルームに接続
@@ -39,9 +49,39 @@
             退出処理
             </summary>
         </member>
-        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.GetConnectionId">
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.UpdateUserTransformAsync(LowFPS.Shared.Models.Entities.SimpleTransform)">
             <summary>
-            接続ID取得
+            ユーザーのTransfrom同期
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.CreateObjectAsync(LowFPS.Shared.Models.Entities.SimpleTransform,System.Int32)">
+            <summary>
+            オブジェクト生成
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.AddObjectListAsync(System.Guid,System.Int32,LowFPS.Shared.Models.Entities.SimpleTransform)">
+            <summary>
+            オブジェクトリストに追加
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.UpdateObjectTransformAsync(System.Guid,LowFPS.Shared.Models.Entities.SimpleTransform)">
+            <summary>
+            オブジェクトのTransform同期
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.DestroyObjectAsync(System.Guid)">
+            <summary>
+            オブジェクトの削除
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.GetOwnershipAsync(System.Guid,System.Boolean)">
+            <summary>
+            所有権を取得する
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.OwnershipAbandonmentAsync(System.Guid)">
+            <summary>
+            所有権を放棄する
             </summary>
         </member>
         <member name="T:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver">
@@ -57,6 +97,31 @@
         <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnLeaveRoom(System.Guid,System.Int32)">
             <summary>
             ユーザーの退室通知
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnUpdateUserTransform(System.Guid,LowFPS.Shared.Models.Entities.SimpleTransform,System.TimeSpan)">
+            <summary>
+            ユーザーのTransfrom通知
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnCreateObject(System.Guid,System.Guid,LowFPS.Shared.Models.Entities.SimpleTransform,System.Int32)">
+            <summary>
+            オブジェクト作成通知
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnUpdateObjectTransform(System.Guid,LowFPS.Shared.Models.Entities.SimpleTransform,System.TimeSpan)">
+            <summary>
+            オブジェクトのTransform通知
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnDestroyObject(System.Guid)">
+            <summary>
+            オブジェクトの削除通知
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnDeleateOwnership(System.Guid)">
+            <summary>
+            所有者削除通知
             </summary>
         </member>
         <member name="T:LowFPS.Shared.Models.Entities.SimpleTransform">

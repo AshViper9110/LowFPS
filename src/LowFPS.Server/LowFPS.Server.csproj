@@ -15,4 +15,9 @@
     <ProjectReference Include="..\LowFPS.Shared\LowFPS.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Contexts\" />
+    <Folder Include="Models\Entities\" />
+  </ItemGroup>
+
 </Project>

@@ -27,7 +27,8 @@ namespace LowFPS.Server.StreamingHubs {
         /// <summary>
         /// オブジェクトデータリスト
         /// </summary>
-
+        public Dictionary<Guid, RoomObjectData> RoomObjectDataList { get; } =
+            new Dictionary<Guid, RoomObjectData>();
 
         /// <summary>
         /// コンストラクタ
