@@ -1,7 +1,17 @@
+using System;
 using UnityEngine;
 
 public class GunData : MonoBehaviour
 {
+    public enum GunType 
+    {
+        AR,
+        SR,
+        SG,
+        LMG,
+        RPG
+    }
+
     //銃の名前
     [SerializeField] private string gunName;
     //弾数
@@ -18,6 +28,8 @@ public class GunData : MonoBehaviour
     [SerializeField] private Transform muzzlePoint;
     //射撃Pos
     [SerializeField] private Transform shellEjectPoint;
+    //銃の種類
+    [SerializeField] private GunType gunType;
 
     public string GunName { get { return gunName; } }
     public int AmmoRounds { get { return ammoRounds; } }
@@ -27,5 +39,6 @@ public class GunData : MonoBehaviour
     public int Rpm { get { return rpm; } }
     public Transform MuzzlePoint { get { return muzzlePoint; } }
     public Transform ShellEjectPoint { get { return shellEjectPoint; } }
+    public GunType GetgunType { get { return gunType; } }
     
 }
