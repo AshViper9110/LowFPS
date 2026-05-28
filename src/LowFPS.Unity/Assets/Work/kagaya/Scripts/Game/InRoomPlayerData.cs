@@ -41,21 +41,47 @@ public class InRoomPlayerData : Singleton<InRoomPlayerData> {
     /// <summary>
     /// プレイヤーリストから削除
     /// </summary>
-    public void RemovePlayer(Guid connectionId, int joinOrder) {
-        Destroy(playerList[connectionId].playerObj);
+    public void RemovePlayer(Guid connectionId, int joinOrder)
+    {
+        if (!playerList.TryGetValue(connectionId, out PlayerData playerData))
+        {
+            Debug.LogWarning($"Player not found: {connectionId}");
+            return;
+        }
+
+        if (playerData != null && playerData.playerObj != null)
+        {
+            StartCoroutine(DestroyNextFrame(playerData.playerObj));
+        }
+
         playerList.Remove(connectionId);
-        //自身の繰り下げ
-        if (mySelf.joinedUser.JoinOrder > joinOrder)
+
+        if (mySelf != null &&
+            mySelf.joinedUser != null &&
+            mySelf.joinedUser.JoinOrder > joinOrder)
         {
             mySelf.joinedUser.JoinOrder--;
         }
-        //全体の繰り下げ
+
         foreach (PlayerData player in playerList.Values)
         {
-            if(player.joinedUser.JoinOrder > joinOrder)
+            if (player == null || player.joinedUser == null)
+                continue;
+
+            if (player.joinedUser.JoinOrder > joinOrder)
             {
                 player.joinedUser.JoinOrder--;
             }
+        }
+    }
+
+    private System.Collections.IEnumerator DestroyNextFrame(GameObject obj)
+    {
+        yield return null;
+
+        if (obj != null)
+        {
+            Destroy(obj);
         }
     }
 }

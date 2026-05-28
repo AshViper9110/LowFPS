@@ -60,7 +60,7 @@ public class SyncPlayer : MonoBehaviour {
     /// オブジェクトのTransform通知
     /// </summary>
     public void OnUpdatedUserTransform(Guid connectionId, SimpleTransform sTransform, float conSpan) {
-        if (this.connectionId != connectionId) {
+        if (this.connectionId != connectionId || connectionId == null) {
             return;
         }
 
