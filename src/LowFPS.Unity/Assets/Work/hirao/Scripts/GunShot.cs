@@ -28,7 +28,7 @@ public class GunShot : MonoBehaviour
 
     private void Start()
     {
-        GameObject playerObj = GameObject.Find("Player");
+        GameObject playerObj = GameObject.Find("Player(Clone)");
 
         if (playerObj != null)
         {
