@@ -32,7 +32,7 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
         /// <summary>
         /// ユーザーのTransfrom通知
         /// </summary>
-        public void OnUpdateUserTransform(Guid connectionId, SimpleTransform playerTransform, TimeSpan sendSpan);
+        public void OnUpdateUserTransform(Guid connectionId, PlayerTransform playerTransform, TimeSpan sendSpan);
 
         /*
          * オブジェクト

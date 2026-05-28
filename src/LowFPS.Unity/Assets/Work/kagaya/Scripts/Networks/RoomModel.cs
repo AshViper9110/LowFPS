@@ -62,7 +62,7 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     /// <summary>
     /// ユーザーのTransfrom通知
     /// </summary>
-    public Action<Guid, SimpleTransform, float> OnUpdatedUserTransfrom { get; set; }
+    public Action<Guid, PlayerTransform, float> OnUpdatedUserTransfrom { get; set; }
 
     /// <summary>
     /// オブジェクト作成通知
@@ -234,7 +234,7 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     /// <summary>
     /// ユーザーのTransform同期
     /// </summary>
-    public async UniTask UpdateUserTransformAsync(SimpleTransform playerTransform) {
+    public async UniTask UpdateUserTransformAsync(PlayerTransform playerTransform) {
         if (roomHub == null) {
             throw new Exception("RoomHubがnullです。");
         }
@@ -249,7 +249,7 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     /// [サーバー通知]
     /// ユーザーのTransfrom通知
     /// </summary>
-    public void OnUpdateUserTransform(Guid connectionId, SimpleTransform playerTransform, TimeSpan sendSpan) {
+    public void OnUpdateUserTransform(Guid connectionId, PlayerTransform playerTransform, TimeSpan sendSpan) {
         if (OnUpdatedUserTransfrom != null) {
             float conSpan = (float)sendSpan.TotalSeconds + (float)receivedSpan.TotalSeconds;
             Debug.Log($"send：{sendSpan}, rece：{receivedSpan}");
