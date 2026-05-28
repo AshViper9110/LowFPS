@@ -35,7 +35,7 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         await RoomModel.I.JoinRoomAsync("User001", "TestRoom");
 
-        myPlayer = Instantiate(playerPrefab);
+        myPlayer = Instantiate(playerPrefab, new Vector3(0, 1, 0), Quaternion.identity);
         SyncPlayer syncPlayer = myPlayer.GetComponent<SyncPlayer>();
         syncPlayer.connectionId = RoomModel.I.ConnectionId;
     }

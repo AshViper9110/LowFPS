@@ -11,14 +11,12 @@ public class SyncPlayer : MonoBehaviour {
     // ConnectionId
     public Guid connectionId;
 
-    // 低遅延用
-    [SerializeField] private bool lowLatency = true;
-    private Vector3 beforePos;
-    private float moveSpeed;
-    private Vector3 direction;
+    [Header("Sync Target")]
+    [SerializeField] private Transform bodyTransform;
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private Transform gunTransform;
 
     private void Awake() {
-        beforePos = this.transform.position;
         RoomModel.I.OnUpdatedUserTransfrom += OnUpdatedUserTransform;
     }
 
@@ -48,10 +46,13 @@ public class SyncPlayer : MonoBehaviour {
 
         if (sendTimer >= SendSpan) {
             sendTimer = 0;
-            moveSpeed = Vector3.Distance(this.transform.position, beforePos);
-            direction = (this.transform.position - beforePos).normalized;
-            beforePos = this.transform.position;
-            RoomModel.I.UpdateUserTransformAsync(this.transform.ToSimpleTransform()).Forget();
+            PlayerTransform playerTransform = new PlayerTransform
+            (
+                bodyTransform.ToSimpleTransform(),
+                cameraTransform.ToSimpleTransform(),
+                gunTransform.ToSimpleTransform()
+            );
+            RoomModel.I.UpdateUserTransformAsync(playerTransform).Forget();
         }
     }
 
@@ -59,17 +60,14 @@ public class SyncPlayer : MonoBehaviour {
     /// [サーバー通知]
     /// オブジェクトのTransform通知
     /// </summary>
-    public void OnUpdatedUserTransform(Guid connectionId, SimpleTransform sTransform, float conSpan) {
+    public void OnUpdatedUserTransform(Guid connectionId, PlayerTransform sTransform, float conSpan) {
         if (this.connectionId != connectionId || connectionId == null) {
             return;
         }
 
-        if (lowLatency) {
-            float distance = (conSpan + SendSpan) * moveSpeed;
-            sTransform.localPosition = sTransform.localPosition + (direction * distance);
-        }
-
-        this.transform.ApplyTransform(sTransform, SendSpan);
+        this.bodyTransform.ApplyTransform(sTransform.body, SendSpan);
+        this.cameraTransform.ApplyTransform(sTransform.camera, SendSpan);
+        this.gunTransform.ApplyTransform(sTransform.gun, SendSpan);
     }
 
     /// <summary>

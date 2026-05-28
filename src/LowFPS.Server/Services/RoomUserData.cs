@@ -11,7 +11,7 @@ namespace LowFPS.Server.Services {
         /// <summary>
         /// ユーザーのTransform情報
         /// </summary>
-        public SimpleTransform transform = new SimpleTransform();
+        public PlayerTransform transform = new PlayerTransform();
 
         /// <summary>
         /// このプレイヤーの送信時間

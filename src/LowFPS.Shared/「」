@@ -49,7 +49,7 @@
             退出処理
             </summary>
         </member>
-        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.UpdateUserTransformAsync(LowFPS.Shared.Models.Entities.SimpleTransform)">
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.UpdateUserTransformAsync(LowFPS.Shared.Models.Entities.PlayerTransform)">
             <summary>
             ユーザーのTransfrom同期
             </summary>
@@ -99,7 +99,7 @@
             ユーザーの退室通知
             </summary>
         </member>
-        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnUpdateUserTransform(System.Guid,LowFPS.Shared.Models.Entities.SimpleTransform,System.TimeSpan)">
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnUpdateUserTransform(System.Guid,LowFPS.Shared.Models.Entities.PlayerTransform,System.TimeSpan)">
             <summary>
             ユーザーのTransfrom通知
             </summary>
@@ -122,6 +122,21 @@
         <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnDeleateOwnership(System.Guid)">
             <summary>
             所有者削除通知
+            </summary>
+        </member>
+        <member name="T:LowFPS.Shared.Models.Entities.PlayerTransform">
+            <summary>
+            MagicOnionでPlayerのtransformをまとめるクラス
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Models.Entities.PlayerTransform.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Models.Entities.PlayerTransform.#ctor(LowFPS.Shared.Models.Entities.SimpleTransform,LowFPS.Shared.Models.Entities.SimpleTransform,LowFPS.Shared.Models.Entities.SimpleTransform)">
+            <summary>
+            コンストラクタ
             </summary>
         </member>
         <member name="T:LowFPS.Shared.Models.Entities.SimpleTransform">

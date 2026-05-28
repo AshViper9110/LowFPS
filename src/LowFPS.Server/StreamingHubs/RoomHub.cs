@@ -162,7 +162,7 @@ namespace LowFPS.Server.StreamingHubs {
         /// <summary>
         /// ユーザーのTransfrom同期
         /// </summary>
-        public Task UpdateUserTransformAsync(SimpleTransform playerTransform) {
+        public Task UpdateUserTransformAsync(PlayerTransform playerTransform) {
             // サーバーに保持
             _roomContext.RoomUserDataList[this.ConnectionId].transform = playerTransform;
 

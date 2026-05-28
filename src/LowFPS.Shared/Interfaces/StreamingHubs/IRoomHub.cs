@@ -43,7 +43,7 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
         /// <summary>
         /// ユーザーのTransfrom同期
         /// </summary>
-        Task UpdateUserTransformAsync(SimpleTransform playerTransform);
+        Task UpdateUserTransformAsync(PlayerTransform playerTransform);
 
         /*
          * オブジェクト
