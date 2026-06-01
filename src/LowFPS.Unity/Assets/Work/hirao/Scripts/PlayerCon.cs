@@ -64,6 +64,14 @@ public class PlayerCon : MonoBehaviour
     public float recoilReturnSpeed = 8f;
     public float recoilSnappiness = 18f;
 
+    // DEATH / SPECTATE
+    public bool isDead = false;
+    private Transform spectateTarget;
+
+    [Header("Spectate")]
+    public Vector3 spectateOffset = new Vector3(0, 8f, -4f);
+    public float spectateFollowSpeed = 8f;
+
     private float currentRecoilX;
     private float targetRecoilX;
 
@@ -135,6 +143,12 @@ public class PlayerCon : MonoBehaviour
 
     void Update()
     {
+        if (isDead)
+        {
+            SpectateUpdate();
+            return;
+        }
+
         Look();
         Lean();
         ADS();
@@ -145,6 +159,9 @@ public class PlayerCon : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDead)
+            return;
+
         GroundCheck();
         Move();
     }
@@ -380,5 +397,73 @@ public class PlayerCon : MonoBehaviour
             -recoilAmount * 0.2f,
              recoilAmount * 0.2f
         );
+    }
+
+    private void SpectateUpdate()
+    {
+        if (spectateTarget == null)
+            return;
+
+        Vector3 targetPos =
+            spectateTarget.position + spectateOffset;
+
+        playerCamera.transform.position =
+            Vector3.Lerp(
+                playerCamera.transform.position,
+                targetPos,
+                Time.deltaTime * spectateFollowSpeed);
+
+        playerCamera.transform.LookAt(
+            spectateTarget.position + Vector3.up * 1.5f);
+    }
+
+    public void Dead(System.Guid killerConnectionId)
+    {
+        Debug.Log($"killerConnectionId = {killerConnectionId}");
+
+        isDead = true;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.isKinematic = true;
+        this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, -10, this.gameObject.transform.position.z);
+        spectateTarget = InRoomPlayerData.I.PlayerList[killerConnectionId].playerObj.transform;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void Respawn(Vector3 spawnPos)
+    {
+        isDead = false;
+
+        spectateTarget = null;
+        rb.isKinematic = false;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        transform.position = spawnPos;
+
+        pitch = 0f;
+        yaw = transform.eulerAngles.y;
+
+        currentRecoilX = 0f;
+        currentRecoilY = 0f;
+
+        targetRecoilX = 0f;
+        targetRecoilY = 0f;
+
+        cameraRoot.localPosition = camOriginPos;
+        cameraRoot.localRotation = Quaternion.identity;
+
+        playerCamera.transform.localPosition =
+            cameraOriginLocalPos;
+
+        playerCamera.transform.localRotation =
+            cameraOriginLocalRot;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

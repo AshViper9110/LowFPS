@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GunShotAsync : MonoBehaviour
@@ -41,7 +42,7 @@ public class GunShotAsync : MonoBehaviour
 
             CreateBulletHole(hit);
 
-            if (hit.collider.tag == "Player") ApplyDamage(hit, damage);
+            if (hit.collider.tag == "Player") ApplyDamage(hit, connectionId, damage);
         }
     }
 
@@ -65,8 +66,9 @@ public class GunShotAsync : MonoBehaviour
         Destroy(hole, bulletHoleLifeTime);
     }
 
-    private void ApplyDamage(RaycastHit hit, int damage)
+    private async void ApplyDamage(RaycastHit hit, Guid connectionId, int damage)
     {
         Debug.Log($"Damage : {damage}");
+        await RoomModel.I.HitDamageAsync(RoomModel.I.ConnectionId, connectionId, damage);
     }
 }

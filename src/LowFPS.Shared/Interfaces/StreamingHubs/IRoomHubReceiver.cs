@@ -63,5 +63,11 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
         ///射撃通知
         /// </summary>
         public void OnGunShot(Guid objectId, Vector3 muzzlePos, Vector3 direction, float range, int damage);
+
+        public void OnDead(Guid myConnectionId, Guid enemyConnectionId);
+
+        public void OnHitDamage(Guid connectionId);
+
+        public void OnReSpawn(Guid connectionId);
     }
 }
