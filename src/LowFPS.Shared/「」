@@ -84,6 +84,11 @@
             所有権を放棄する
             </summary>
         </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub.GunShotAsync(System.Guid,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Int32)">
+            <summary>
+            射撃同期
+            </summary>
+        </member>
         <member name="T:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver">
             <summary>
             サーバーからクライアントへの通知関連
@@ -123,6 +128,11 @@
             <summary>
             所有者削除通知
             </summary>
+        </member>
+        <member name="M:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHubReceiver.OnGunShot(System.Guid,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Int32)">
+             <summary>
+            射撃通知
+             </summary>
         </member>
         <member name="T:LowFPS.Shared.Models.Entities.PlayerTransform">
             <summary>

@@ -84,6 +84,8 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     /// </summary>
     public Action<Guid> OnDeleatedOwnership { get; set; }
 
+    public Action<Guid, Vector3, Vector3, float, int> OnGunshot { get; set; }
+
     /*
      * 処理
      */
@@ -252,7 +254,7 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     public void OnUpdateUserTransform(Guid connectionId, PlayerTransform playerTransform, TimeSpan sendSpan) {
         if (OnUpdatedUserTransfrom != null) {
             float conSpan = (float)sendSpan.TotalSeconds + (float)receivedSpan.TotalSeconds;
-            Debug.Log($"send：{sendSpan}, rece：{receivedSpan}");
+            //Debug.Log($"send：{sendSpan}, rece：{receivedSpan}");
             OnUpdatedUserTransfrom(connectionId, playerTransform, conSpan);
         }
     }
@@ -367,6 +369,26 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
     public void OnDeleateOwnership(Guid objectId) {
         if (OnDeleatedOwnership != null) {
             OnDeleatedOwnership(objectId);
+        }
+    }
+
+    /// <summary>
+    /// 射撃を送信する
+    /// </summary>
+    public async UniTask GunShotAsync(Vector3 muzzlePos, Vector3 direction, float range, int damage)
+    {
+        await roomHub.GunShotAsync(this.ConnectionId, muzzlePos, direction, range, damage);
+    }
+
+    /// <summary>
+    /// [サーバー通知]
+    /// 射撃通知
+    /// </summary>
+    public void OnGunShot(Guid connectionId, Vector3 muzzlePos, Vector3 direction, float range, int damage)
+    {
+        if(OnGunshot != null)
+        {
+            OnGunshot(connectionId, muzzlePos, direction, range, damage);
         }
     }
 }

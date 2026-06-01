@@ -3,6 +3,8 @@ using LowFPS.Shared.Interfaces.Services;
 using LowFPS.Shared.Interfaces.StreamingHubs;
 using LowFPS.Shared.Models.Entities;
 using MagicOnion.Server.Hubs;
+using UnityEngine;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace LowFPS.Server.StreamingHubs {
     public class RoomHub : StreamingHubBase<IRoomHub, IRoomHubReceiver>, IRoomHub {
@@ -320,6 +322,13 @@ namespace LowFPS.Server.StreamingHubs {
 
             // 解除
             this._roomContext.RoomObjectDataList[objectId].ownerExist = false;
+            return Task.CompletedTask;
+        }
+
+        public Task GunShotAsync(Guid connectonId, Vector3 muzzlePos, Vector3 direction, float range, int damage)
+        {
+            // 自分以外に通知
+            this._roomContext.Group.Except([this.ConnectionId]).OnGunShot(connectonId, muzzlePos, direction, range, damage);
 
             return Task.CompletedTask;
         }

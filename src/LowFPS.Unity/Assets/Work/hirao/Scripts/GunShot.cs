@@ -65,7 +65,7 @@ public class GunShot : MonoBehaviour
         Shoot();
     }
 
-    private void Shoot()
+    private async void Shoot()
     {
         if (playerCon != null)
         {
@@ -89,9 +89,9 @@ public class GunShot : MonoBehaviour
             Debug.Log($"Hit : {hit.collider.name}");
 
             CreateBulletHole(hit);
-
-            ApplyDamage(hit);
         }
+
+        await RoomModel.I.GunShotAsync(gunData.MuzzlePoint.position, direction, range, gunData.Damage);
     }
 
     private Vector3 GetSpreadDirection()
@@ -157,10 +157,5 @@ public class GunShot : MonoBehaviour
         hole.transform.SetParent(hit.collider.transform);
 
         Destroy(hole, bulletHoleLifeTime);
-    }
-
-    private void ApplyDamage(RaycastHit hit)
-    {
-        Debug.Log($"Damage : {gunData.Damage}");
     }
 }

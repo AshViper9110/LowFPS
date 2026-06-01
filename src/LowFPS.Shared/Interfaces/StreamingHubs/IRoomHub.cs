@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace LowFPS.Shared.Interfaces.StreamingHubs {
     /// <summary>
@@ -78,5 +79,10 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
         /// 所有権を放棄する
         /// </summary>
         Task OwnershipAbandonmentAsync(Guid objectId);
+
+        /// <summary>
+        /// 射撃同期
+        /// </summary>
+        Task GunShotAsync(Guid connectionId, Vector3 muzzlePos, Vector3 direction, float range, int damage);
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace LowFPS.Shared.Interfaces.StreamingHubs {
     /// <summary>
@@ -57,5 +58,10 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
         /// 所有者削除通知
         /// </summary>
         public void OnDeleateOwnership(Guid objectId);
+
+        /// <summary>
+        ///射撃通知
+        /// </summary>
+        public void OnGunShot(Guid objectId, Vector3 muzzlePos, Vector3 direction, float range, int damage);
     }
 }
