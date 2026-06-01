@@ -22,5 +22,6 @@ namespace LowFPS.Server.Services {
         /// このプレイヤーの受信時間
         /// </summary>
         public TimeSpan receivedSpan = TimeSpan.Zero;
+        
     }
 }

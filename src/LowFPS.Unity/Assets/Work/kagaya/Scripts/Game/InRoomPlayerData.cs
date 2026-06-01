@@ -84,4 +84,14 @@ public class InRoomPlayerData : Singleton<InRoomPlayerData> {
             Destroy(obj);
         }
     }
+
+    public PlayerData GetPlayer(Guid connectionId)
+    {
+        if (playerList.TryGetValue(connectionId, out PlayerData playerData))
+        {
+            return playerData;
+        }
+
+        return null;
+    }
 }

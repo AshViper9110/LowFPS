@@ -86,6 +86,12 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
 
     public Action<Guid, Vector3, Vector3, float, int> OnGunshot { get; set; }
 
+    public Action<Guid, Guid> Ondead { get; set; }
+
+    public Action<Guid> OnHitDamaged { get; set; }
+
+    public Action<Guid> OnRespawned { get; set; }
+
     /*
      * 処理
      */
@@ -389,6 +395,40 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
         if(OnGunshot != null)
         {
             OnGunshot(connectionId, muzzlePos, direction, range, damage);
+        }
+    }
+
+    public async UniTask HitDamageAsync(Guid myConnectionId, Guid enemyConnectionId, int damage)
+    {
+        await roomHub.HitDamageAsync(myConnectionId, enemyConnectionId, damage);
+    }
+
+    public void OnDead(Guid myConnectionId, Guid enemyConnectionId)
+    {
+        if (Ondead != null)
+        {
+            Ondead(myConnectionId, enemyConnectionId);
+        }
+    }
+
+    public void OnHitDamage(Guid connectionId)
+    {
+        if (OnHitDamaged != null)
+        {
+            OnHitDamaged(connectionId);
+        }
+    }
+
+    public async UniTask ReSpawnAsync()
+    {
+        await roomHub.ReSpawnAsync(this.ConnectionId);
+    }
+
+    public void OnReSpawn(Guid connectionId)
+    {
+        if (OnRespawned != null)
+        {
+            OnRespawned(connectionId);
         }
     }
 }

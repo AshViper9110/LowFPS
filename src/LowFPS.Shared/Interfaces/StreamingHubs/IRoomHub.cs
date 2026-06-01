@@ -84,5 +84,9 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
         /// 射撃同期
         /// </summary>
         Task GunShotAsync(Guid connectionId, Vector3 muzzlePos, Vector3 direction, float range, int damage);
+
+        Task HitDamageAsync(Guid myConnectionId, Guid enemyConnectionId, int damage);
+
+        Task ReSpawnAsync(Guid connectionId);
     }
 }

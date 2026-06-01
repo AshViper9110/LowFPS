@@ -103,6 +103,7 @@ namespace LowFPS.Server.StreamingHubs {
             joinedUser.ConnectionId = this.ConnectionId;
             joinedUser.Name = userName;
             joinedUser.JoinOrder = this._roomContext.RoomUserDataList.Count + 1;
+            joinedUser.Hp = 100;
 
             // ルームコンテキストにユーザー情報を登録
             var roomUserData = new RoomUserData() { joinedUser = joinedUser };
@@ -329,6 +330,28 @@ namespace LowFPS.Server.StreamingHubs {
         {
             // 自分以外に通知
             this._roomContext.Group.Except([this.ConnectionId]).OnGunShot(connectonId, muzzlePos, direction, range, damage);
+
+            return Task.CompletedTask;
+        }
+
+        public Task HitDamageAsync(Guid myConnectionId, Guid enemyConnectionId, int damage)
+        {
+            this._roomContext.RoomUserDataList[myConnectionId].joinedUser.Hp -= damage;
+            if (this._roomContext.RoomUserDataList[myConnectionId].joinedUser.Hp <= 0 )
+            {
+                Console.WriteLine($"{myConnectionId}が死亡しました");
+                this._roomContext.Group.All.OnDead(myConnectionId, enemyConnectionId);
+            } else
+            {
+                this._roomContext.Group.All.OnHitDamage(myConnectionId);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task ReSpawnAsync(Guid connectionId)
+        {
+            this._roomContext.RoomUserDataList[connectionId].joinedUser.Hp = 100;
+            this._roomContext.Group.All.OnReSpawn(connectionId);
 
             return Task.CompletedTask;
         }

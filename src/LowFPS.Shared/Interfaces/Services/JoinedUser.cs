@@ -19,5 +19,10 @@ namespace LowFPS.Shared.Interfaces.Services {
         /// 参加順番
         /// </summary>
         [Key(2)] public int JoinOrder { get; set; }
+        /// <summary>
+        /// 体力
+        /// </summary>
+        [Key(3)] public int Hp { get; set; }
+
     }
 }

@@ -24,6 +24,11 @@
             参加順番
             </summary>
         </member>
+        <member name="P:LowFPS.Shared.Interfaces.Services.JoinedUser.Hp">
+            <summary>
+            体力
+            </summary>
+        </member>
         <member name="T:LowFPS.Shared.Interfaces.StreamingHubs.IRoomHub">
             <summary>
             クライアントから呼び出す処理を実装するクラス用インターフェース
