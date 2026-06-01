@@ -88,9 +88,9 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
 
     public Action<Guid, Guid> Ondead { get; set; }
 
-    public Action<Guid> OnHitDamaged { get; set; }
+    public Action<Guid, JoinedUser> OnHitDamaged { get; set; }
 
-    public Action<Guid> OnRespawned { get; set; }
+    public Action<Guid, JoinedUser> OnRespawned { get; set; }
 
     /*
      * 処理
@@ -411,11 +411,11 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
         }
     }
 
-    public void OnHitDamage(Guid connectionId)
+    public void OnHitDamage(Guid connectionId, JoinedUser joinedUser)
     {
         if (OnHitDamaged != null)
         {
-            OnHitDamaged(connectionId);
+            OnHitDamaged(connectionId, joinedUser);
         }
     }
 
@@ -424,11 +424,11 @@ public class RoomModel : Singleton<RoomModel>, IRoomHubReceiver {
         await roomHub.ReSpawnAsync(this.ConnectionId);
     }
 
-    public void OnReSpawn(Guid connectionId)
+    public void OnReSpawn(Guid connectionId, JoinedUser joinedUser)
     {
         if (OnRespawned != null)
         {
-            OnRespawned(connectionId);
+            OnRespawned(connectionId, joinedUser);
         }
     }
 }

@@ -30,6 +30,8 @@ public class GunData : MonoBehaviour
     [SerializeField] private Transform shellEjectPoint;
     //銃の種類
     [SerializeField] private GunType gunType;
+    //リロード時間
+    [SerializeField] private int reloadTime;
 
     public string GunName { get { return gunName; } }
     public int AmmoRounds { get { return ammoRounds; } }
@@ -40,5 +42,6 @@ public class GunData : MonoBehaviour
     public Transform MuzzlePoint { get { return muzzlePoint; } }
     public Transform ShellEjectPoint { get { return shellEjectPoint; } }
     public GunType GetgunType { get { return gunType; } }
-    
+    public int ReloadTime { get { return reloadTime; } }
+
 }
