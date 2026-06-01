@@ -66,8 +66,8 @@ namespace LowFPS.Shared.Interfaces.StreamingHubs {
 
         public void OnDead(Guid myConnectionId, Guid enemyConnectionId);
 
-        public void OnHitDamage(Guid connectionId);
+        public void OnHitDamage(Guid connectionId, JoinedUser joinedUser);
 
-        public void OnReSpawn(Guid connectionId);
+        public void OnReSpawn(Guid connectionId, JoinedUser joinedUse);
     }
 }

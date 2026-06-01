@@ -9,6 +9,9 @@ public class GunShotAsync : MonoBehaviour
 
     [SerializeField] private float bulletHoleLifeTime = 10f;
 
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip gunShotClip;
+
     private void OnEnable()
     {
         if (RoomModel.I != null)
@@ -28,7 +31,7 @@ public class GunShotAsync : MonoBehaviour
     private void OnGunShot(System.Guid connectionId, Vector3 muzzlePos, Vector3 direction, float range, int damage)
     {
         Debug.Log($"GunShot {connectionId}");
-
+        audioSource.PlayOneShot(gunShotClip);
         // Hit Scan
         Ray ray = new Ray(muzzlePos, direction);
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -8,6 +9,21 @@ public class PlayerCon : MonoBehaviour
     public Transform cameraRoot;
     public Camera playerCamera;
     public Transform gunPivot;
+
+    [Header("Weapons")]
+    public Transform gunTransform;
+    public int currentGun = 0;
+    public List<GameObject> weapons = new List<GameObject>();
+
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip gunReloadClip;
+
+    [Header("Ammo")]
+    public int currentAmmo;
+    public GunData gunData;
+    public bool isReload = false;
+    public int currentTime = -1;
 
     // アイアンサイト位置
     private Transform adsPoint;
@@ -139,6 +155,8 @@ public class PlayerCon : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        gunData = weapons[currentGun].GetComponent<GunData>();
+        currentAmmo = gunData.AmmoRounds;
     }
 
     void Update()
@@ -155,6 +173,10 @@ public class PlayerCon : MonoBehaviour
         Jump();
         HeadBob();
         UpdateFOV();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            AmmoReload();
+        }
     }
 
     void FixedUpdate()
@@ -162,8 +184,26 @@ public class PlayerCon : MonoBehaviour
         if (isDead)
             return;
 
+        if (currentTime >= 0) currentTime--;
+
+        if (currentTime == 0) 
+        { 
+            isReload = false;
+            audioSource.PlayOneShot(gunReloadClip);
+            currentAmmo = gunData.AmmoRounds;
+        }
+
         GroundCheck();
         Move();
+    }
+
+    void AmmoReload()
+    {
+        // 弾が満タンならリロードしない
+        if (currentAmmo >= gunData.AmmoRounds || isReload)
+            return;
+        currentTime = gunData.ReloadTime;
+        isReload = true;
     }
 
     // =====================================
