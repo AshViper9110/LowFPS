@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class GunShot : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class GunShot : MonoBehaviour
 
     [SerializeField] private float bulletHoleLifeTime = 10f;
 
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip gunShotClip;
+
     // 次に撃てる時間
     private float nextFireTime;
 
@@ -46,19 +50,14 @@ public class GunShot : MonoBehaviour
 
     private void TryShoot()
     {
-        if (gunData == null)
-        {
-            Debug.LogWarning("GunData is Null");
-            return;
-        }
+
+        if (NetworkManager.I.MyPlayerCon.currentAmmo <= 0 || NetworkManager.I.MyPlayerCon.isReload) return;
+        if (gunData == null)  return;
 
         // RPM -> 秒間発射間隔
         float fireInterval = 60f / gunData.Rpm;
 
-        if (Time.time < nextFireTime)
-        {
-            return;
-        }
+        if (Time.time < nextFireTime) return;
 
         nextFireTime = Time.time + fireInterval;
 
@@ -71,8 +70,12 @@ public class GunShot : MonoBehaviour
         {
             playerCon.AddRecoil(gunData.Backlash);
         }
+        audioSource.PlayOneShot(gunShotClip);
+
         // Shell Eject
         EjectShell();
+
+        NetworkManager.I.MyPlayerCon.currentAmmo--;
 
         // Accuracy
         Vector3 direction = GetSpreadDirection();

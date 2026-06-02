@@ -1,5 +1,6 @@
 using LowFPS.Shared.Interfaces.Services;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class NetworkManager : Singleton<NetworkManager>
@@ -8,6 +9,8 @@ public class NetworkManager : Singleton<NetworkManager>
     [SerializeField] private GameObject playerPrefab;
 
     private GameObject myPlayer;
+
+    public Transform spawnPoint;
 
     public PlayerCon MyPlayerCon
     {
@@ -107,31 +110,32 @@ public class NetworkManager : Singleton<NetworkManager>
         InRoomPlayerData.I.RemovePlayer(connectionId, joinOrder);
     }
 
-    private void OnHitDamaged(Guid connectionId)
+    private void OnHitDamaged(Guid connectionId, JoinedUser joinedUser)
     {
-        //Debug.Log($"{InRoomPlayerData.I.PlayerList[connectionId].joinedUser.Hp}");
+        InRoomPlayerData.I.PlayerList[connectionId].joinedUser.Hp = joinedUser.Hp;
     }
 
     private void Ondead(Guid myConnectionId, Guid enemyConnectionId)
     {
         if (RoomModel.I.ConnectionId != myConnectionId)
         {
-            //InRoomPlayerData.I.PlayerList[myConnectionId].playerObj.SetActive(false);
             return;
         }
         Debug.Log("ÇµÇ⁄Ç§ÇµÇ‹ÇµÇΩ");
+        InRoomPlayerData.I.PlayerList[myConnectionId].joinedUser.Hp = 0;
         MyPlayerCon.Dead(enemyConnectionId);
 
     }
     
-    private void OnRespawned(Guid connectionId)
+    private void OnRespawned(Guid connectionId, JoinedUser joinedUser)
     {
         if (RoomModel.I.ConnectionId != connectionId)
         {
-            //InRoomPlayerData.I.PlayerList[connectionId].playerObj.SetActive(true);
             return;
         }
         Debug.Log("ÉäÉXÉ|Å[ÉìÇµÇ‹ÇµÇΩ");
-        MyPlayerCon.Respawn(new Vector3(0, 1, 0));
+        InRoomPlayerData.I.PlayerList[connectionId].joinedUser.Hp = joinedUser.Hp;
+
+        MyPlayerCon.Respawn(spawnPoint.position);
     }
 }

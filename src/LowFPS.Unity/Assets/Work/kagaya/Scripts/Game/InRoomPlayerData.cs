@@ -49,10 +49,7 @@ public class InRoomPlayerData : Singleton<InRoomPlayerData> {
             return;
         }
 
-        if (playerData != null && playerData.playerObj != null)
-        {
-            StartCoroutine(DestroyNextFrame(playerData.playerObj));
-        }
+        Destroy(playerData.playerObj);
 
         playerList.Remove(connectionId);
 
@@ -72,16 +69,6 @@ public class InRoomPlayerData : Singleton<InRoomPlayerData> {
             {
                 player.joinedUser.JoinOrder--;
             }
-        }
-    }
-
-    private System.Collections.IEnumerator DestroyNextFrame(GameObject obj)
-    {
-        yield return null;
-
-        if (obj != null)
-        {
-            Destroy(obj);
         }
     }
 
