@@ -113,18 +113,19 @@ public class NetworkManager : Singleton<NetworkManager>
     private void OnHitDamaged(Guid connectionId, JoinedUser joinedUser)
     {
         InRoomPlayerData.I.PlayerList[connectionId].joinedUser.Hp = joinedUser.Hp;
+
+        if (connectionId == RoomModel.I.ConnectionId) return;
+        //TODO プレイヤーの上部に被ダメージを表示
+
     }
 
     private void Ondead(Guid myConnectionId, Guid enemyConnectionId)
     {
-        if (RoomModel.I.ConnectionId != myConnectionId)
-        {
-            return;
-        }
+        if (RoomModel.I.ConnectionId != myConnectionId) return;
+
         Debug.Log("しぼうしました");
         InRoomPlayerData.I.PlayerList[myConnectionId].joinedUser.Hp = 0;
         MyPlayerCon.Dead(enemyConnectionId);
-
     }
     
     private void OnRespawned(Guid connectionId, JoinedUser joinedUser)
