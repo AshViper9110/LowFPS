@@ -10,4 +10,7 @@ public class PlayerData : MonoBehaviour {
     public GameObject playerObj;
     // ユーザー情報
     public JoinedUser joinedUser;
+
+    // ロードアウト情報
+    public LoadOutData loadOutData;
 }
